@@ -1,6 +1,8 @@
 <?php namespace FrenchFrogs\Models;
 
 use Cache;
+use gossi\codegen\model\PhpClass;
+use gossi\codegen\generator\CodeFileGenerator;
 
 /**
  * Classe de gestion des références
@@ -18,16 +20,10 @@ class Reference
     const CACHE_PREFIX = 'reference_';
 
     /**
-     * Nom du fichier pour le build
-     *
-     */
-    const IDE_HELPER_FILE = '_reference.php';
-
-    /**
      * Nom de la classe pour l'auto completion
      *
      */
-    const IDE_HELPER_CLASS = 'Ref';
+    const CLASS_NAME = 'Ref';
 
     /**
      * Collection de reference
@@ -206,15 +202,22 @@ class Reference
      */
     static public function build()
     {
-        $file = app_path('../') . static::IDE_HELPER_FILE;
+        $file = storage_path('/app/') . static::CLASS_NAME . '.php';
 
-        // on supprime le fichier s'il existe deja
-        if (file_exists($file)) {
-            @unlink($file);
-        }
+        // recuperation des données
+        $constant = \query('reference', ['reference_id'])->whereNull('deleted_at')->pluck('reference_id');
+        $constant = array_combine($constant,$constant);
 
-        //@todo
-        dd($file);
+        // generate class
+        $class = new PhpClass();
+        $class->setQualifiedName(static::CLASS_NAME);
+        $class->setConstants($constant);
+
+        // generate code
+        $generator = new CodeFileGenerator();
+        $content = $generator->generate($class);
+
+        file_put_contents($file, $content);
     }
 
 }
