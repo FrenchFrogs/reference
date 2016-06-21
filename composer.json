@@ -1,0 +1,30 @@
+{
+    "name": "frenchfrogs/scheduler",
+    "description": "Schedule mangement with frenchfrogs framework",
+    "type": "library",
+    "source": {
+        "url": "git@github.com:FrenchFrogs/reference.git",
+        "type": "git",
+        "reference": "origin/master"
+    },
+    "homepage": "https://github.com/FrenchFrogs/reference",
+    "licence": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Julien Houvion",
+            "email": "cotcotquedec@gmail.com",
+            "homepage": "https://github.com/cotcotquedec",
+            "role": "Project Manager"
+        }
+    ],
+    "require": {
+        "frenchfrogs/framework" : ">=1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "FrenchFrogs\\Reference\\": "src/",
+            "FrenchFrogs\\Models\\": "src/Models"
+        }
+    },
+    "minimum-stability": "dev"
+}
