@@ -1,6 +1,6 @@
 {
-    "name": "frenchfrogs/scheduler",
-    "description": "Schedule mangement with frenchfrogs framework",
+    "name": "frenchfrogs/reference",
+    "description": "Gestion des table de reference",
     "type": "library",
     "source": {
         "url": "git@github.com:FrenchFrogs/reference.git",
