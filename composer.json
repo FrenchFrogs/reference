@@ -24,7 +24,8 @@
         "psr-4": {
             "FrenchFrogs\\Reference\\": "src/",
             "FrenchFrogs\\Models\\": "src/Models"
-        }
+        },
+        "files": ["src/function.php"]
     },
     "minimum-stability": "dev"
 }
