@@ -18,6 +18,18 @@ class Reference
     const CACHE_PREFIX = 'reference_';
 
     /**
+     * Nom du fichier pour le build
+     *
+     */
+    const IDE_HELPER_FILE = '_reference.php';
+
+    /**
+     * Nom de la classe pour l'auto completion
+     *
+     */
+    const IDE_HELPER_CLASS = 'Ref';
+
+    /**
      * Collection de reference
      *
      * @var
@@ -32,28 +44,103 @@ class Reference
      */
     protected $data;
 
+
+    /**
+     * Instances
+     *
+     * @var array
+     */
+    static protected $instances = [];
+
+
+    /**
+     * Constructor
+     *
+     * Reference constructor.
+     * @param $collection
+     */
+    protected function __construct($collection)
+    {
+        $this->collection = $collection;
+
+        // generation des données
+        $this->getData();
+    }
+
+
+    /**
+     * constructor du singleton
+     *
+     * @return static
+     */
+    static function getInstance($collection) {
+
+        if (!array_key_exists($collection, static::$instances)) {
+            self::$instances[$collection] = new static($collection);
+        }
+
+        return self::$instances[$collection];
+    }
+
+    /**
+     * Return the cache index
+     *
+     * @return string
+     */
+    public function getCacheName()
+    {
+        return static::CACHE_PREFIX . $this->collection;
+    }
+
+    /**
+     * Clear all cache foir the collection
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        // unset data
+        if($this->hasData()){
+            unset($this->data);
+        }
+
+        // unset cache
+        Cache::forget($this->getCacheName());
+
+        return $this;
+    }
+
+
+    /**
+     * Return TRUE if $data is set
+     *
+     * @return bool
+     */
+    public function hasData()
+    {
+        return isset($this->data);
+    }
+
     /**
      * Recuperation des données de la collection
      *
      * @param bool $force_refresh
      */
-    public function getData($force_refresh = false)
+    public function getData()
     {
-
-        // si on force le refresh, on efface les donnée
-        if ($force_refresh) {
-            unset($this->data);
-        }
-
         // si pas de donnée on regénère
-        if (is_null($this->data)) {
+        if (!isset($this->data)) {
 
             // adresse du cache
             $cache = static::CACHE_PREFIX . $this->collection;
 
             // si pas les données en cache, on les génère
             if (!Cache::has($cache)) {
-                $data = Db\Reference::where('collection', $this->collection)->all();
+                $data = \query('reference')
+                    ->whereNull('deleted_at')
+                    ->where('collection', $this->collection)
+                    ->orderBy('name')
+                    ->get();
                 Cache::forever($cache, $data);
             } else {
                 $data = Cache::get($cache);
@@ -62,22 +149,25 @@ class Reference
             // inscription des data
             $this->data = $data;
         }
+
+        return $this->data;
     }
 
     /**
-     * Constructeur
+     * Return $data as pair with id => name
      *
-     * Reference constructor.
-     * @param $collection
+     * @return array
      */
-    public function __construct($collection)
+    public function pairs()
     {
-        $this->collection = $collection;
+        $pairs = [];
+        foreach ($this->data as $row) {
+            $pairs[$row['reference_id']] = $row['name'];
+        }
 
-
-
-
+        return $pairs;
     }
+
 
 
     /**
@@ -108,6 +198,23 @@ class Reference
     static public function removeDatabaseReference($id)
     {
         Db\Reference::find($id)->delete();
+    }
+
+    /**
+     * Construction du fichier d'helper pour l'ide afin d'avoir l'autocompletion
+     *
+     */
+    static public function build()
+    {
+        $file = app_path('../') . static::IDE_HELPER_FILE;
+
+        // on supprime le fichier s'il existe deja
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+
+        //@todo
+        dd($file);
     }
 
 }
