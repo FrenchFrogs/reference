@@ -202,7 +202,7 @@ class Reference
      */
     static public function build()
     {
-        $file = storage_path('/app/') . static::CLASS_NAME . '.php';
+        $file = storage_path('/../bootstrap/') . static::CLASS_NAME . '.php';
 
         // recuperation des données
         $constant = \query('reference', ['reference_id'])->whereNull('deleted_at')->pluck('reference_id');
