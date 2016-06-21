@@ -29,5 +29,6 @@ class ReferenceBuildCommand extends Command
     public function handle()
     {
         Reference::build();
+        $this->info('Fichier généré avec succès');
     }
 }
