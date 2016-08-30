@@ -1,6 +1,8 @@
 # reference
 Gestion des tables de références
 
+#Je ne maintiens plus ce package, j'ai migré https://github.com/cotcotquedec/frenchfrogs
+
 l'objectif de ce modules est de facilité la crétion de reference dans un projet en apportant un maximum de confort pour les developpeurs.
 Les fonctions principals sont :
 - Unification des tables de reference dans une seul table (allègement du modèle de donnée)
